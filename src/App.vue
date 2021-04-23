@@ -1,29 +1,58 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div id="app" class=''>
+    <spinner-component v-if="loading"/>
+    <div class="container-fluid" v-else>
+      <div v-if="showMenuBar">
+        <div class="row">
+          <div class="col-md-2">
+            <menu-component></menu-component>
+          </div>
+          <div class="col-md-10 shadow">
+            <div class="row">
+              <menu-top-component></menu-top-component>
+            </div>
+              <router-view/>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+            <router-view/>
+      </div>
+
     </div>
-    <router-view/>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+import { mapState, mapActions } from 'vuex'
+import SpinnerComponent from './components/SpinnerComponent'
+import MenuComponent from './components/MenuComponent'
+import MenuTopComponent from './components/MenuTopComponent'
+
+export default {
+  components: { SpinnerComponent, MenuComponent, MenuTopComponent },
+  methods: {
+    ...mapActions('global', ['ActionSetLoading'])
+  },
+
+  beforeMount () {
+    this.ActionSetLoading(true)
+  },
+
+  mounted () {
+    this.ActionSetLoading(false)
+  },
+
+  computed: {
+    ...mapState('global', ['loading']),
+    showMenuBar () {
+      return this.$route.name !== 'login'
     }
   }
+
 }
+</script>
+
+<style lang="scss">
+
 </style>

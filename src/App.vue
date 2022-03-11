@@ -1,17 +1,18 @@
 <template>
   <div id="app" class=''>
-    <spinner-component v-if="loading"/>
-    <div class="container-fluid" v-else>
+    <div class="container-fluid">
       <div v-if="showMenuBar">
         <div class="row">
           <div class="col-md-2">
             <menu-component></menu-component>
           </div>
-          <div class="col-md-10 shadow">
+          <div class="col-md-10 shadow mb-5">
             <div class="row">
               <menu-top-component></menu-top-component>
             </div>
-              <router-view/>
+              <spinner-component v-if="loading"/>
+              <router-view v-show="!loading"/>
+              <footer-component></footer-component>
           </div>
         </div>
       </div>
@@ -28,19 +29,12 @@ import { mapState, mapActions } from 'vuex'
 import SpinnerComponent from './components/SpinnerComponent'
 import MenuComponent from './components/MenuComponent'
 import MenuTopComponent from './components/MenuTopComponent'
-
+import FooterComponent from './components/FooterComponent'
+// window.localStorage.removeItem('vuex')
 export default {
-  components: { SpinnerComponent, MenuComponent, MenuTopComponent },
+  components: { SpinnerComponent, MenuComponent, MenuTopComponent, FooterComponent },
   methods: {
     ...mapActions('global', ['ActionSetLoading'])
-  },
-
-  beforeMount () {
-    this.ActionSetLoading(true)
-  },
-
-  mounted () {
-    this.ActionSetLoading(false)
   },
 
   computed: {

@@ -61,16 +61,20 @@ export default {
   methods: {
     ...mapActions('global', ['ActionSetLoading']),
     ...mapActions('auth', ['ActionSetUser']),
+
     async doLogin () {
       this.logando = true
       try {
         const { email, senha } = this.form
         const res = await this.$firebase.auth().signInWithEmailAndPassword(email, senha)
-        if (res.user.uid) {
-          this.ActionSetUser(res.user.uid)
+
+        if (res.user) {
+          const { uid, email } = res.user
+          this.ActionSetUser({ uid: uid, email: email })
           this.$router.push({ name: 'home' })
         }
       } catch (erro) {
+        console.log(erro)
         console.log('Não Autorizado')
       }
       this.logando = false

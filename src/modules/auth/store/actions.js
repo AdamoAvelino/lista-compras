@@ -5,5 +5,5 @@ export const ActionSetUser = ({ commit }, payload) => {
 }
 
 export const ActionRemoveUser = ({ commit }) => {
-  commit(types.SET_USER, '')
+  commit(types.SET_USER, { uid: '', email: '' })
 }

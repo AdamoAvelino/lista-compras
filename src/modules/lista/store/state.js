@@ -1,3 +1,4 @@
 export default {
-  itensLista: []
+  itensLista: [],
+  list: ''
 }

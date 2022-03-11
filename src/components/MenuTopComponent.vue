@@ -1,17 +1,17 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary w-100 shadow">
-  <div class="collapse navbar-collapse" id="navbarTop">
-  </div>
-  <button class='btn btn-warning btn-sm' v-on:click.prevent="logout">
-    <div v-if="!deslogando">
-      <i class="fa fa-power-off mr-2"></i>
-      Logaout
+    <div class="collapse navbar-collapse" id="navbarTop">
     </div>
-    <div class="spinner-border spinner-border-sm text-dark" role="status" v-else>
-      <span class="sr-only">Loading...</span>
-    </div>
-  </button>
-</nav>
+    <button class='btn btn-warning btn-sm' v-on:click.prevent="logout">
+      <div v-if="!deslogando">
+        <i class="fa fa-power-off mr-2"></i>
+        Logaout
+      </div>
+      <div class="spinner-border spinner-border-sm text-dark" role="status" v-else>
+        <span class="sr-only">Loading...</span>
+      </div>
+    </button>
+  </nav>
 </template>
 
 <script>

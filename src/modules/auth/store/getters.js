@@ -1,3 +1,3 @@
 export const user = ({ user }) => {
-  return user !== ''
+  return user.uid !== ''
 }

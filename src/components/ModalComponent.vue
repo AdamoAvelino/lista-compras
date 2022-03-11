@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Modal -->
-    <div class="modal fade" id="modelId" aria-hidden="true">
+    <div class="modal fade" :id="modalId" aria-hidden="true">
       <div class="modal-dialog" :class="`modal-${size}`" role="document">
         <div class="modal-content bg-dark">
           <div class="modal-header bg-primary text-white">
@@ -23,36 +23,46 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+// import { mapState, mapActions } from 'vuex'
 import $ from 'jquery'
 export default {
   props: {
     size: { type: String, default: 'md' },
-    title: { type: String, default: 'Propriedade title vazia' }
+    title: { type: String, default: 'Propriedade title vazia' },
+    modalId: { type: String, default: 'modalId' }
   },
 
-  methods: {
-    ...mapActions('global', ['ActionSetShowmodal'])
-  },
-
-  mounted () {
-    $('#modelId').on('hidden.bs.modal', () => {
-      this.ActionSetShowmodal(false)
+  created () {
+    this.$root.$on('Modal::Show', (modalId) => {
+      $(`#${modalId}`).modal('show')
     })
-  },
-
-  computed: {
-    ...mapState('global', ['show'])
-  },
-
-  watch: {
-    show: (value) => {
-      if (value) {
-        $('#modelId').modal('show')
-      } else {
-        $('#modelId').modal('hide')
-      }
-    }
+    this.$root.$on('Modal::Hide', (modalId) => {
+      $(`#${modalId}`).modal('hide')
+    })
   }
+
+  // methods: {
+  //   ...mapActions('global', ['ActionSetShowmodal'])
+  // },
+
+  // mounted () {
+  //   $('#modelId').on('hidden.bs.modal', () => {
+  //     this.ActionSetShowmodal(false)
+  //   })
+  // },
+
+  // computed: {
+  //   ...mapState('global', ['show'])
+  // },
+
+  // watch: {
+  //   show: (value) => {
+  //     if (value) {
+  //       $('#modelId').modal('show')
+  //     } else {
+  //       $('#modelId').modal('hide')
+  //     }
+  //   }
+  // }
 }
 </script>

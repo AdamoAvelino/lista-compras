@@ -5,8 +5,22 @@
 
 <script>
 // @ is an alias to /src
-
+import { mapActions } from 'vuex'
 export default {
-  name: 'home'
+  name: 'home',
+
+  methods: {
+    ...mapActions('global', ['ActionSetLoading'])
+  },
+
+  beforeMount () {
+    this.ActionSetLoading(true)
+  },
+
+  mounted () {
+    setTimeout(() => {
+      this.ActionSetLoading(false)
+    }, 1000)
+  }
 }
 </script>

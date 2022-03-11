@@ -2,7 +2,6 @@
 @import '../../../node_modules/@fortawesome/fontawesome-free/css/all.css';;
 
 @import '../../../node_modules/bootstrap/scss/bootstrap.scss';
-
 $gray-dark: #1a1d1f !important;
 $gray-medium: lighten(#343a40, 3) !important;
 $gray-light: #c2c6c9 !important;
@@ -21,14 +20,10 @@ $primary-light: lighten($primary, 30);
     font-family: 'Poppins', sans-serif;
 }
 html {
-    background: url('../images/background.jpg');
-    background-size: cover;
 }
 body {
     
     background: rgb(26,29,31);
-    background: linear-gradient(0deg,rgba(0,0,0,0.98) 8%, rgba(0,0,0,0.88) 50%, rgba(0,0,0,0.98) 100%);
-    
     color: var(--gray-light);
 }
 

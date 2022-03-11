@@ -1,135 +1,124 @@
 <template>
 <div>
   <header-page-component title='Criar Lista'></header-page-component>
-  <formulario>
-    <div slot='content-formulario' class='col-sm-12'>
-      <div class="row">
-        <div class="col-md-3">
-          <input type="month" class="form-control form-control-sm" name="inputName" id="inputName" placeholder="">
+  <formulario-lista>
+    <div class="col-md-3" slot='inputs'>
+      <input
+      type="month"
+      class="form-control form-control-sm"
+      :class="requiredList.monthList"
+      v-model="formList.monthList"
+      v-on:change="setList"
+      >
+      <div
+        class="invalid-feedback"
+        v-if="requiredList.monthList"
+        >
+          Inclua uma data
         </div>
-        <div class="col-md-9">
-          <button type="button" class="btn btn-sm btn-outline-primary" v-on:click="showModal">
-            <i class="fa fa-plus-circle mr-2" aria-hidden="true"></i>
-            Item
-          </button>
-        </div>
-      </div>
     </div>
-  </formulario>
-  <modal-component title='Inserir Item' size='lg'>
-    <formulario slot='body'>
-      <div slot='content-formulario' class='col-sm-12'>
-        <div class="row">
-          <div class="col-md-4">
-            <input type="text"
-            class="form-control form-control-sm"
-            v-model="formItem.produto"
-            placeholder="Produto">
-          </div>
-          <div class="col-md-4">
-            <input type="number"
-            step="1.0"
-            class="form-control form-control-sm"
-            v-model="formItem.quantidade"
-            placeholder="Quantidade">
-          </div>
-          <div class="col-md-4">
-            <input type="number"
-            step="0.01"
-            class="form-control form-control-sm"
-            v-model="formItem.preco"
-            placeholder="Preço">
-          </div>
+    <button
+      class="btn btn-sm btn-primary"
+      v-on:click="salvarLista"
+      slot='btn-salvar'
+      >
+        <div
+        v-if="loader"
+        class="spinner-border spinner-border-sm text-light"
+        role="status">
+          <span class="sr-only">Loading...</span>
         </div>
-      </div>
-    </formulario>
-    <button class='btn-primary btn btn-sm'
-    slot='footer'
-    v-on:click='inserirItem'>Inserir
-    </button>
-  </modal-component>
-  <table class="table text-white" v-if="itensLista.length > 0">
-    <thead>
-      <tr>
-        <th>Produto</th>
-        <th>Quantidade</th>
-        <th>Preço</th>
-        <th>Açoes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-      :key="key"
-      v-for="(item, key) in itensLista">
-        <td>{{ item.produto }}</td>
-        <td>{{ item.quantidade }}</td>
-        <td>{{ item.preco }}</td>
-        <td>
-          <button class="btn btn-outline-warning btn-sm mr-2">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="btn btn-outline-danger btn-sm">
-            <i class="fa fa-trash" aria-hidden="true"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div v-if="itensLista.length > 0">
-    <button class="btn btn-sm btn-primary" v-on:click="salvarLista">
-      <i class="fas fa-save mr-2"></i>
-      Salvar
-    </button>
-    </div>
+        <div v-else>
+          <i class="fas fa-save mr-2"></i>
+          Salvar
+        </div>
+      </button>
+  </formulario-lista>
+
 </div>
 </template>
 
 <script>
 import HeaderPageComponent from '../../components/HeaderPageComponet'
-import ModalComponent from '../../components/ModalComponent'
-import Formulario from './Formulario'
+import FormularioLista from './FormularioLista'
 import { mapActions, mapState } from 'vuex'
 export default {
   components: {
-    HeaderPageComponent,
-    Formulario,
-    ModalComponent
+    FormularioLista,
+    HeaderPageComponent
   },
-  data: () => ({
-    formItem: {
-      produto: '',
-      quantidade: '',
-      preco: ''
-    }
-  }),
 
   computed: {
-    ...mapState('lista', ['itensLista'])
-  },
-  methods: {
-    ...mapActions('global', ['ActionSetShowmodal']),
-    ...mapActions('lista', ['ActionSetListaItens']),
-
-    inserirItem () {
-      this.itensLista.push(this.formItem)
-      this.ActionSetListaItens(this.itensLista)
-      this.formItem = {}
-      this.ActionSetShowmodal(false)
-    },
-
-    salvarLista () {
-      // const ref = this.$firebase.database().ref('lista')
-      // const id = ref.push().key
-    },
-
-    showModal () {
-      this.ActionSetShowmodal(true)
-    }
+    ...mapState('lista', ['list', 'itensLista']),
+    ...mapState('auth', ['user'])
   },
 
-  mounted () {
-    this.ActionSetShowmodal(false)
+  beforeMount () {
     this.ActionSetListaItens([])
+    this.ActionSetList('')
+  },
+
+  data: () => ({
+    loader: false,
+    formList: {
+      monthList: ''
+    },
+    requiredList: {
+      'monthList': { 'is-invalid': false }
+    }
+
+  }),
+
+  methods: {
+    ...mapActions('lista', ['ActionSetListaItens', 'ActionSetList']),
+
+    setList () {
+      this.ActionSetList(this.formList.monthList)
+    },
+
+    async salvarLista () {
+      this.loader = true
+
+      if (this.verifyFormData('requiredList', 'formList')) {
+        const dados = this.montarDados()
+        const ref = this.$firebase.database().ref('lista')
+        const id = ref.push().key
+        await ref.child(id).set(dados, (erro) => {
+          this.$router.push({ name: 'lista' })
+          if (erro) {
+            console.log(erro)
+          } else {
+
+          }
+        })
+      }
+      this.loader = false
+    },
+
+    verifyFormData (rules, form) {
+      let resposta = true
+      Object.keys(this[rules]).map((item) => {
+        if ((this[rules][item] && !this[form][item])) {
+          this[rules][item] = { 'is-invalid': true }
+          resposta = false
+        } else if (this[rules][item]) {
+          this[rules][item] = { 'is-invalid': false }
+        }
+      })
+      return resposta
+    },
+
+    montarDados () {
+      return {
+        'usuario': {
+          id: this.user.uid,
+          email: this.user.email
+        },
+        data_lista: this.list,
+        itens: this.itensLista
+      }
+    }
+
   }
 }
 </script>

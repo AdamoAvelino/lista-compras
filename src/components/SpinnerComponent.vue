@@ -16,12 +16,16 @@ export default {
 
 <style scoped lang='scss'>
   .loading {
+    left: 0;
     width: 100%;
-    height: 100vh;
+    height: calc(100vh - 50px);
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column
+    flex-direction: column;
+    background: rgb(26,29,31);
+    background: linear-gradient(0deg,rgba(0,0,0,0.98) 8%, rgba(0,0,0,0.88) 50%, rgba(0,0,0,0.98) 100%);
+    color: var(--gray-light);
   }
 </style>

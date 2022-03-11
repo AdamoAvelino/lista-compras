@@ -1,3 +1,7 @@
 export default {
-  user: ''
+  user: {
+    uid: '',
+    email: ''
+  }
+
 }
